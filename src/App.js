@@ -1,5 +1,5 @@
 import "./App.css";
-
+import ProtectedRoute from "./ProtectedRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import NavBar from "./NavBar";
@@ -23,7 +23,7 @@ function App() {
 
                 <Route path="/signup" element={<Signup />} />
 
-                <Route path="/success" element={<Success />} />
+                <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
 
                 <Route path="*" element={<Home />} />
 

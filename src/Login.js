@@ -44,7 +44,7 @@ function Login() {
 
 			setTimeout(() => {
                 		nav("/success");
-            		}, 1500);
+            		}, 2000);
 
     		})
     		.catch((err) => {

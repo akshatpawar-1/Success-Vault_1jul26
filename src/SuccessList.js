@@ -2,15 +2,17 @@ import { useState, useEffect } from "react";
 import db from "./Firebase";
 import { ref, onValue, remove } from "firebase/database";
 import { toast } from "react-toastify";
+import { auth } from "./Firebase";
 
 function SuccessList(props) {
 
     const [stories, setStories] = useState([]);
     const {setName, setTitle, setDesc, setEditingId} = props;
+    const uid = auth.currentUser.uid;
 
     useEffect(() => {
 
-        let r = ref(db, "success");
+        let r = ref(db, "success/"+uid);
 
         onValue(r, (snapshot) => {
 
@@ -48,7 +50,7 @@ function SuccessList(props) {
 
         if (ans) {
 
-            let r = ref(db, "success/" + id);
+            let r = ref(db, "success/" +uid+"/"+ id);
 
             remove(r);
 

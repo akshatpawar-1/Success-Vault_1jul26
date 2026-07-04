@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import db from "./Firebase";
 import { set, ref } from "firebase/database";
 import { ToastContainer, toast } from "react-toastify";
+import { auth } from "./Firebase";
 
 
 function SuccessForm(props) {
@@ -42,15 +43,16 @@ function SuccessForm(props) {
             rDesc.current.focus();
             return;
         }
-
-        let data = {name,title,desc};
+	
+	const uid = auth.currentUser.uid;
+        const data = {name,title,desc};
 
 	if(editingId==null)
 	{
         	let node = name + "--" + new Date().getTime();
 
 		//pointer to address that location
-        	let r = ref(db, "success/" + node);
+        	let r = ref(db, "success/" +uid+"/"+ node);
 
 		//Take the data object and store it at the location pointed to by r
         	set(r, data);
@@ -60,7 +62,7 @@ function SuccessForm(props) {
 	}
 	else
 	{
-		let r = ref(db,"success/"+editingId);
+		let r = ref(db,"success/"+uid+"/"+editingId);
 
     		set(r,data);
 
