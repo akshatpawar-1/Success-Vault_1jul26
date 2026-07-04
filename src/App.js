@@ -1,38 +1,35 @@
 import "./App.css";
-import { useState } from "react";
-import SuccessForm from "./SuccessForm";
-import SuccessList from "./SuccessList";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import NavBar from "./NavBar";
+import Home from "./Home";
+import Login from "./Login";
+import Signup from "./Signup";
+import Success from "./Success";
 
 function App() {
 
-    const [name, setName] = useState("");
-    const [title, setTitle] = useState("");
-    const [desc, setDesc] = useState("");
-    const [editingId, setEditingId] = useState(null);
-
     return (
-        <>
-            <h1>Success Vault</h1>
+        <BrowserRouter>
 
-            <SuccessForm
-                name={name}
-                setName={setName}
-                title={title}
-                setTitle={setTitle}
-                desc={desc}
-                setDesc={setDesc}
-                editingId={editingId}
-                setEditingId={setEditingId}
-            />
+            <NavBar />
 
-            <SuccessList
-                setName={setName}
-                setTitle={setTitle}
-                setDesc={setDesc}
-                setEditingId={setEditingId}
-            />
+            <Routes>
 
-        </>
+                <Route path="/" element={<Home />} />
+
+                <Route path="/login" element={<Login />} />
+
+                <Route path="/signup" element={<Signup />} />
+
+                <Route path="/success" element={<Success />} />
+
+                <Route path="*" element={<Home />} />
+
+            </Routes>
+
+        </BrowserRouter>
     );
 }
 export default App;
