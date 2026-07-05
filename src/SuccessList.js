@@ -7,7 +7,7 @@ import { auth } from "./Firebase";
 function SuccessList(props) {
 
     const [stories, setStories] = useState([]);
-    const {setName, setTitle, setDesc, setEditingId} = props;
+    const {setTitle, setDesc, setEditingId} = props;
     const uid = auth.currentUser.uid;
 
     useEffect(() => {
@@ -25,7 +25,6 @@ function SuccessList(props) {
 
                     let story = {
                         id: key,
-                        name: data[key].name,
                         title: data[key].title,
                         desc: data[key].desc
                     };
@@ -62,7 +61,6 @@ function SuccessList(props) {
 
     const editStory = (story) => {
 
-        setName(story.name);
     	setTitle(story.title);
     	setDesc(story.desc);
 
@@ -83,8 +81,6 @@ function SuccessList(props) {
                         <div key={story.id} className="story">
 
                             <h3>{story.title}</h3>
-
-                            <p><b>Name:</b> {story.name}</p>
 
                             <p>{story.desc}</p>
 

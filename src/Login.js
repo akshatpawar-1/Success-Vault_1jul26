@@ -1,8 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { auth } from "./Firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { toast, ToastContainer } from "react-toastify";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import db from "./Firebase";
+import { ref, get } from "firebase/database";
 
 function Login() {
 
@@ -12,6 +14,25 @@ function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [checkingAuth, setCheckingAuth] = useState(true);
+
+    // If someone is already logged in and manually types /login,
+    // send them to /success instead of showing the form.
+    useEffect(() => {
+
+        const unsub = onAuthStateChanged(auth, (currentUser) => {
+
+            if (currentUser != null) {
+                nav("/success", { replace: true });
+            } else {
+                setCheckingAuth(false);
+            }
+
+        });
+
+        return () => unsub();
+
+    }, []);
 
     const hEmail = (event) => {
         setEmail(event.target.value);
@@ -40,11 +61,26 @@ function Login() {
     		signInWithEmailAndPassword(auth, email, password)
     		.then((res) => {
 
-        		toast.success("Login Successful!");
+			const uid = res.user.uid;
 
-			setTimeout(() => {
-                		nav("/success");
-            		}, 2000);
+			let r = ref(db, "profile/" + uid);
+
+			get(r)
+			.then((snapshot) => {
+
+        			if(snapshot.exists()){
+					toast.success("Login Successful!",{autoClose:1500});
+            				nav("/success");
+				}
+        			else{
+            				nav("/profile");
+				}
+			})
+			.catch((err) => {
+
+				toast.error("Login succeeded but profile check failed: " + err.message);
+
+			});
 
     		})
     		.catch((err) => {
@@ -55,11 +91,13 @@ function Login() {
 
     }
 
+    if (checkingAuth)
+        return null;
+
     return (
         <>
 	<div className="fc">
             <h1>Login</h1>
-	    <ToastContainer />
 
             <form onSubmit={login}>
 

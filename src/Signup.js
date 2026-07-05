@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { auth } from "./Firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { ToastContainer, toast } from "react-toastify";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 
@@ -13,6 +13,25 @@ function Signup() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [checkingAuth, setCheckingAuth] = useState(true);
+
+    // Same idea as Login.js - if already logged in, leave this page
+    // instead of showing the signup form.
+    useEffect(() => {
+
+        const unsub = onAuthStateChanged(auth, (currentUser) => {
+
+            if (currentUser != null) {
+                nav("/success", { replace: true });
+            } else {
+                setCheckingAuth(false);
+            }
+
+        });
+
+        return () => unsub();
+
+    }, []);
 
     const hEmail = (event) => {
         setEmail(event.target.value);
@@ -41,11 +60,8 @@ function Signup() {
         createUserWithEmailAndPassword(auth, email, password)
         .then((res) => {
 
-            toast.success("Account Created!");
-
-	    setTimeout(() => {
-        	nav("/login");
-    	    }, 1500);
+            toast.success("Account Created!",{autoClose:1500});
+            nav("/login");
 
         })
         .catch((err) => {
@@ -56,12 +72,13 @@ function Signup() {
 
     }
 
+    if (checkingAuth)
+        return null;
+
     return (
         <>
 	<div className="fc">
             <h1>Signup</h1>
-
-            <ToastContainer />
 
             <form onSubmit={signup}>
 

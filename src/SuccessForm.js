@@ -1,34 +1,54 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import db from "./Firebase";
-import { set, ref } from "firebase/database";
-import { ToastContainer, toast } from "react-toastify";
+import { set, ref, get, push } from "firebase/database";
+import { toast } from "react-toastify";
 import { auth } from "./Firebase";
 
 
 function SuccessForm(props) {
 
-    const rName = useRef();
     const rTitle = useRef();
     const rDesc = useRef();
 
     const [msg, setMsg] = useState("");
-    const {name, setName, title, setTitle, desc, setDesc, editingId, setEditingId} = props;
+    const [displayName, setDisplayName] = useState("");
+    const {title, setTitle, desc, setDesc, editingId, setEditingId} = props;
 
-    const hName = (event) => { setName(event.target.value); }
     const hTitle = (event) => { setTitle(event.target.value); }
     const hDesc = (event) => { setDesc(event.target.value); }
 
+    useEffect(() => {
 
-    const save = (event) => {
+        if(auth.currentUser == null)
+        	return;
+
+    	const uid = auth.currentUser.uid;
+    	let r = ref(db, "profile/" + uid);
+
+    	get(r)
+    	.then((snapshot) => {
+
+        	if(snapshot.exists()) {
+            		setDisplayName(snapshot.val().displayName);
+        	}
+
+    	});
+
+    }, []);
+
+
+    const reset=()=>{
+		setTitle("");
+		setDesc("");
+		setMsg("");
+		setEditingId(null);	
+	
+		rTitle.current.focus();
+	}
+
+    const save = async (event) => {
 
         event.preventDefault();
-
-        if (name.trim() === "") {
-            toast.error("Please Enter Name", { autoClose: 2000 });
-	    setMsg("");
-            rName.current.focus();
-            return;
-        }
 
         if (title.trim() === "") {
             toast.error("Please Enter Success Title", { autoClose: 2000 });
@@ -45,57 +65,57 @@ function SuccessForm(props) {
         }
 	
 	const uid = auth.currentUser.uid;
-        const data = {name,title,desc};
+        const data = {title,desc};
 
-	if(editingId==null)
-	{
-        	let node = name + "--" + new Date().getTime();
+	try {
 
-		//pointer to address that location
-        	let r = ref(db, "success/" +uid+"/"+ node);
+		if(editingId==null)
+		{
+			// Use push() to generate a safe, unique key instead of building
+			// one from displayName - display names can contain characters
+			// ('.', '#', '$', '[', ']', '/') that Firebase Realtime Database
+			// keys are not allowed to contain, which silently breaks the write.
+			let listRef = ref(db, "success/" + uid);
+			let newRef = push(listRef);
 
-		//Take the data object and store it at the location pointed to by r
-        	set(r, data);
+			await set(newRef, data);
 
-        	setMsg("✅ Success Story Saved!");
-		setEditingId(null);
+			setMsg("✅ Success Story Saved!");
+			setEditingId(null);
+		}
+		else
+		{
+			let r = ref(db,"success/"+uid+"/"+editingId);
+
+			await set(r,data);
+
+			setMsg("✅ Story Updated!");
+
+			setEditingId(null);
+		}
+
+		setTitle("");
+		setDesc("");
+
+		rTitle.current.focus();
+
+	} catch (err) {
+
+		// Previously write failures were silent - the "Saved!" message
+		// showed even when the database rejected the write.
+		toast.error("Save failed: " + err.message);
+		setMsg("");
+
 	}
-	else
-	{
-		let r = ref(db,"success/"+uid+"/"+editingId);
-
-    		set(r,data);
-
-    		setMsg("✅ Story Updated!");
-
-    		setEditingId(null);
-		
-	}
-
-        setName("");
-        setTitle("");
-        setDesc("");
-
-        rName.current.focus();
 
     }
 
     return (
         <>
 
-            <ToastContainer />
-
             <div className="fc">
 
                 <form onSubmit={save}>
-
-                    <input
-                        type="text"
-                        placeholder="Enter Name"
-                        ref={rName}
-                        value={name}
-                        onChange={hName}
-                    />
 
                     <input
                         type="text"
@@ -120,6 +140,13 @@ function SuccessForm(props) {
                         className="btn"
                         value={editingId==null ? "Save Story" : "Update Story"}
                     />
+		
+		    <input 
+			type="button"
+			className="btn"	
+			value="Reset" 
+			onClick={reset}
+		    />
 
                 </form>
 

@@ -5,7 +5,6 @@ import SuccessList from "./SuccessList";
 
 function Success() {
 
-    const [name, setName] = useState("");
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [editingId, setEditingId] = useState(null);
@@ -16,8 +15,6 @@ function Success() {
             <h1>Success Vault</h1>
 
             <SuccessForm
-                name={name}
-                setName={setName}
                 title={title}
                 setTitle={setTitle}
                 desc={desc}
@@ -27,7 +24,6 @@ function Success() {
             />
 
             <SuccessList
-                setName={setName}
                 setTitle={setTitle}
                 setDesc={setDesc}
                 setEditingId={setEditingId}
@@ -36,5 +32,4 @@ function Success() {
         </div>
     );
 }
-
 export default Success;

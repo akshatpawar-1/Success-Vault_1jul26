@@ -2,17 +2,20 @@ import { useState, useEffect } from "react";
 import { auth } from "./Firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Navbar() {
 
     const [user, setUser] = useState(null);
     const nav = useNavigate();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
     	const unsub = onAuthStateChanged(auth, (currentUser) => {
 
         	setUser(currentUser);
+		setLoading(false);
 
     	});
 
@@ -22,10 +25,14 @@ function Navbar() {
 
     const logout = () => {
 
+	const ans = window.confirm("Are you sure you want to logout?");
+    	if (!ans)
+        	return;
+
     	signOut(auth)
     	.then(() => {
 
-        	alert("Logged Out Successfully");
+        	toast.success("Logged Out Successfully",{autoClose:1500});
         	nav("/");
 
     	})
@@ -37,6 +44,8 @@ function Navbar() {
 
     };
 
+    if (loading)
+    	return null;
     return (
 
             <nav className="navbar">
@@ -55,6 +64,8 @@ function Navbar() {
     		<>
         		<Link to="/">Home</Link>
         		<Link to="/success">Success Vault</Link>
+
+			<Link to="/profile">My Profile</Link>			
 
         		<button className="nav-link" onClick={logout}>Logout</button>
     		</>
