@@ -12,8 +12,6 @@ function Success() {
     return (
         <div className="success-page">
 
-            <h1>Success Vault</h1>
-
             <SuccessForm
                 title={title}
                 setTitle={setTitle}

@@ -113,6 +113,9 @@ function Profile() {
                 </form>
 
             </div>
+		<p style={{ textAlign: "center", marginTop: "15px", fontSize: "15px" }}>
+    		<b>Note :</b> Display Name will appear on your downloaded PDF
+		</p> 
         </>
     );
 }

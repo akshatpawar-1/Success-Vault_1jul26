@@ -1,5 +1,6 @@
 import "./App.css";
 import ProtectedRoute from "./ProtectedRoute";
+import GuestRoute from "./GuestRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -23,9 +24,9 @@ function App() {
 
                 <Route path="/" element={<Home />} />
 
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
 
-                <Route path="/signup" element={<Signup />} />
+                <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
 
                 <Route path="/success" element={<ProtectedRoute><Success /></ProtectedRoute>} />
 

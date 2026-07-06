@@ -4,7 +4,6 @@ import { set, ref, get, push } from "firebase/database";
 import { toast } from "react-toastify";
 import { auth } from "./Firebase";
 
-
 function SuccessForm(props) {
 
     const rTitle = useRef();
@@ -35,7 +34,6 @@ function SuccessForm(props) {
     	});
 
     }, []);
-
 
     const reset=()=>{
 		setTitle("");
@@ -80,7 +78,10 @@ function SuccessForm(props) {
 
 			await set(newRef, data);
 
-			setMsg("✅ Success Story Saved!");
+			setMsg("Success Story Saved!");
+			setTimeout(() => {
+    				setMsg("");
+			},1500);
 			setEditingId(null);
 		}
 		else
@@ -89,7 +90,10 @@ function SuccessForm(props) {
 
 			await set(r,data);
 
-			setMsg("✅ Story Updated!");
+			setMsg("Story Updated!");
+			setTimeout(() => {
+    				setMsg("");
+			},1500);
 
 			setEditingId(null);
 		}
@@ -123,7 +127,12 @@ function SuccessForm(props) {
                         ref={rTitle}
                         value={title}
                         onChange={hTitle}
+			maxLength="50"
                     />
+                    {title.length > 0 && (
+    			<div className="char-count">{title.length} / 50</div>
+		    )}
+
 
                     <textarea
                         placeholder="Enter Description"
@@ -132,27 +141,35 @@ function SuccessForm(props) {
                         ref={rDesc}
                         value={desc}
                         onChange={hDesc}
+			maxLength="300"
                     >
                     </textarea>
+		    {desc.length > 0 && (
+    			<div className="char-count">{desc.length} / 300</div>
+		    )}
 
-                    <input
-                        type="submit"
-                        className="btn"
-                        value={editingId==null ? "Save Story" : "Update Story"}
-                    />
-		
-		    <input 
-			type="button"
-			className="btn"	
-			value="Reset" 
-			onClick={reset}
-		    />
+                    <div className="btn-row-form">
+
+                        <input
+                            type="submit"
+                            className="btn"
+                            value={editingId==null ? "Save Story" : "Update Story"}
+                        />
+
+                        <input 
+                            type="button"
+                            className="btn btn-reset"	
+                            value="Reset" 
+                            onClick={reset}
+                        />
+
+                    </div>
 
                 </form>
 
                 <br />
 
-                <h2>{msg}</h2>
+                {msg && <p className="success-msg">{msg}</p>}
 
             </div>
 

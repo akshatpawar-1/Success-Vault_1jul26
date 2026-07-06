@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import db from "./Firebase";
-import { ref, onValue, remove } from "firebase/database";
+import { get, ref, onValue, remove } from "firebase/database";
 import { toast } from "react-toastify";
 import { auth } from "./Firebase";
+
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import { saveAs } from "file-saver";
+import QRCode from "qrcode";
 
 function SuccessList(props) {
 
@@ -14,7 +19,10 @@ function SuccessList(props) {
 
         let r = ref(db, "success/"+uid);
 
-        onValue(r, (snapshot) => {
+        // onValue returns an unsubscribe function - keep it and call it
+        // on unmount, otherwise the listener keeps running after you
+        // leave the page (leaks + can stack up duplicates over time).
+        const unsubscribe = onValue(r, (snapshot) => {
 
             if (snapshot.exists()) {
 
@@ -39,9 +47,17 @@ function SuccessList(props) {
                 setStories([]);
             }
 
+        }, (error) => {
+
+            // Without this, a failed read (e.g. permission-denied) fails
+            // completely silently and the list just looks empty forever.
+            toast.error("Failed to load stories: " + error.message);
+
         });
 
-    }, []);
+        return () => unsubscribe();
+
+    }, [uid]);
 
     const delStory = (id) => {
 
@@ -51,9 +67,17 @@ function SuccessList(props) {
 
             let r = ref(db, "success/" +uid+"/"+ id);
 
-            remove(r);
+            remove(r)
+            .then(() => {
 
-            toast.success("Story Deleted!", { autoClose: 2000 });
+                toast.success("Story Deleted!", { autoClose: 2000 });
+
+            })
+            .catch((err) => {
+
+                toast.error("Delete failed: " + err.message);
+
+            });
 
         }
 
@@ -68,12 +92,136 @@ function SuccessList(props) {
 
     };
 
+    const downloadVault = async () => {
+
+	if (stories.length === 0) {
+		toast.error("Add at least one story before downloading.");
+		return;
+	}
+
+	try {
+
+		const uid = auth.currentUser.uid;
+
+		let displayName = "User";
+
+		let profileRef = ref(db, "profile/" + uid);
+
+		let snapshot = await get(profileRef);
+
+		if (snapshot.exists()) {
+			displayName = snapshot.val().displayName;
+		}
+
+		const doc = new jsPDF();
+
+		doc.setFontSize(20);
+		doc.text("Success Stories", 105, 20, { align: "center" });
+
+		doc.setFontSize(14);
+		doc.text("By " + displayName, 105, 30, { align: "center" });
+
+		doc.line(15, 35, 195, 35);
+
+		let rows = [];
+
+		stories.forEach((story, index) => {
+
+			rows.push([
+				index + 1,
+				story.title,
+				story.desc
+			]);
+
+		});
+
+		autoTable(doc, {
+
+			startY: 40,
+
+			head: [["#", "Title", "Description"]],
+
+			body: rows,
+		
+			headStyles: {
+        			fillColor: [198, 239, 206],
+        			textColor: [0, 0, 0],       // black text
+        			fontStyle: "bold"
+    			}
+
+		});
+
+		const finalY = doc.lastAutoTable.finalY;
+
+		doc.setFontSize(11);
+
+		doc.text(
+			"Generated On : " + new Date().toLocaleDateString(),
+			14,
+			finalY + 10
+		);
+
+		const qrText =
+		`Success Vault
+
+		By ${displayName}
+
+		Generated On: ${new Date().toLocaleDateString()}`;
+
+		const qrImage = await QRCode.toDataURL(qrText);
+
+		doc.addImage(
+			qrImage,
+			"PNG",
+			160,
+			finalY + 5,
+			35,
+			35
+		);
+
+		const pages = doc.getNumberOfPages();
+		for (let i = 1; i <= pages; i++) {
+
+			doc.setPage(i);
+			doc.setFontSize(10);
+
+			doc.text(
+				`Page ${i} of ${pages}`,
+				105,
+				290,
+				{ align: "center" }
+			);
+
+		}
+
+		const blob = doc.output("blob");
+		saveAs(blob,`${displayName}-Success-Vault.pdf`);
+
+	} catch (err) {
+
+		// Previously a failed PDF (bad profile read, QR code failure, etc.)
+		// would fail with no feedback at all.
+		toast.error("Download failed: " + err.message);
+
+	}
+
+    };
+
     return (
         <>
 
-            <h2>Success Stories</h2>
+            <h2>My Success Stories</h2>
+	<div className="stories-container">
 
             <div className="stories">
+
+                {
+                    stories.length === 0 &&
+                    <div className="empty-state">
+                        <p>No success stories yet.</p>
+                        <p>Start by adding your first achievement!</p>
+                    </div>
+                }
 
                 {
                     stories.map((story) => (
@@ -103,11 +251,19 @@ function SuccessList(props) {
                             </div>
 
                         </div>
-
                     ))
                 }
-
+		
             </div>
+		{
+    			stories.length > 0 &&
+    			<button
+        			className="download-btn"
+        			onClick={downloadVault}
+    			>Download PDF
+    			</button>
+		}
+	</div>
 
         </>
     );

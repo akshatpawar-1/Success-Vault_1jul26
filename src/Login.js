@@ -60,6 +60,8 @@ function Login() {
 
     		signInWithEmailAndPassword(auth, email, password)
     		.then((res) => {
+		
+			toast.success("Login Successful!",{autoClose:1500});
 
 			const uid = res.user.uid;
 
@@ -69,7 +71,6 @@ function Login() {
 			.then((snapshot) => {
 
         			if(snapshot.exists()){
-					toast.success("Login Successful!",{autoClose:1500});
             				nav("/success");
 				}
         			else{
@@ -109,8 +110,6 @@ function Login() {
                     onChange={hEmail}
                 />
 
-                <br /><br />
-
                 <input
                     type="password"
                     placeholder="Enter Password"
@@ -118,8 +117,6 @@ function Login() {
                     value={password}
                     onChange={hPassword}
                 />
-
-                <br /><br />
 
                 <input
                     type="submit"

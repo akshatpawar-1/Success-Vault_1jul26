@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { auth } from "./Firebase";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword,signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -13,26 +13,7 @@ function Signup() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [checkingAuth, setCheckingAuth] = useState(true);
-
-    // Same idea as Login.js - if already logged in, leave this page
-    // instead of showing the signup form.
-    useEffect(() => {
-
-        const unsub = onAuthStateChanged(auth, (currentUser) => {
-
-            if (currentUser != null) {
-                nav("/success", { replace: true });
-            } else {
-                setCheckingAuth(false);
-            }
-
-        });
-
-        return () => unsub();
-
-    }, []);
-
+    
     const hEmail = (event) => {
         setEmail(event.target.value);
     }
@@ -58,12 +39,15 @@ function Signup() {
         }
 
         createUserWithEmailAndPassword(auth, email, password)
-        .then((res) => {
+        .then(async () => {
 
-            toast.success("Account Created!",{autoClose:1500});
-            nav("/login");
+    		toast.success("Account Created!", { autoClose:1500 });
 
-        })
+		await signOut(auth);	
+	
+       		nav("/login", { replace: true });
+
+	})
         .catch((err) => {
 
             toast.error(err.message);
@@ -71,9 +55,6 @@ function Signup() {
         });
 
     }
-
-    if (checkingAuth)
-        return null;
 
     return (
         <>
@@ -90,8 +71,6 @@ function Signup() {
                     onChange={hEmail}
                 />
 
-                <br /><br />
-
                 <input
                     type="password"
                     placeholder="Enter Password"
@@ -99,8 +78,6 @@ function Signup() {
                     value={password}
                     onChange={hPassword}
                 />
-
-                <br /><br />
 
                 <input
                     type="submit"
