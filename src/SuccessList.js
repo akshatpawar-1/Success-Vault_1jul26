@@ -161,20 +161,18 @@ function SuccessList(props) {
 			finalY + 10
 		);
 
-		const qrText =
-		`Success Vault
+		const qrText =`https://success-vault-1jul26.web.app/`;
 
-		By ${displayName}
-
-		Generated On: ${new Date().toLocaleDateString()}`;
-
+		doc.setFontSize(10);
+		doc.text("Scan QR to visit", 177.5, finalY + 15, { align: "center" });
+		doc.text("Success Vault App", 177.5, finalY + 19, { align: "center" });
 		const qrImage = await QRCode.toDataURL(qrText);
 
 		doc.addImage(
 			qrImage,
 			"PNG",
 			160,
-			finalY + 5,
+			finalY + 20,
 			35,
 			35
 		);
