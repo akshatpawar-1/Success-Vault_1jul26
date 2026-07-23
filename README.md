@@ -8,6 +8,12 @@ This project was built as part of my JavaScript/MERN Full Stack learning journey
 
 ---
 
+## Live Demo
+
+https://success-vault-1jul26.web.app/
+
+---
+
 ## Features
 
 - User Registration & Login
