@@ -1,70 +1,138 @@
-# Getting Started with Create React App
+# Success Vault
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Success Vault is a full-stack web application that helps users securely preserve their achievements, milestones, memorable moments, and personal success stories in one place.
 
-## Available Scripts
+Users can create their own digital success journal, manage their accomplishments, update their profile, and generate professional PDF reports containing their achievements along with a QR Code linking back to the deployed application.
 
-In the project directory, you can run:
+This project was built as part of my JavaScript/MERN Full Stack learning journey with the goal of developing industry-standard portfolio projects.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- User Registration & Login
+- Firebase Authentication
+- Protected & Guest Routes
+- User Profile Management
+- Update Display Name
+- Success CRUD Operations
+- Firebase Realtime Database Integration
+- User-friendly Toast Notifications
+- PDF Report Generation
+- QR Code Generation inside PDF
+- Responsive User Interface
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
 
-### `npm run build`
+### Frontend
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- React
+- HTML
+- CSS
+- JavaScript
+- React Router DOM
+- Axios
+- React Toastify
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Backend / Services
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Firebase Authentication
+- Firebase Realtime Database
 
-### `npm run eject`
+### Libraries
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- jsPDF
+- FileSaver.js
+- QRCode
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Authentication
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+This project uses **Firebase Authentication** for secure user authentication.
 
-## Learn More
+To enhance security and improve user experience, the application implements:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Protected Routes
+- Guest Routes
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This ensures only authenticated users can access their Success Vault while preventing logged-in users from accessing authentication pages.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Modules
 
-### Analyzing the Bundle Size
+### Authentication
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- User Registration
+- User Login
+- Logout
+- Persistent Authentication
 
-### Making a Progressive Web App
+### Profile
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- Update Display Name
+- Personalized User Information
 
-### Advanced Configuration
+### Success Management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- Add Success
+- View Success
+- Edit Success
+- Delete Success
 
-### Deployment
+### PDF Report
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- Generate Professional Success Report
+- Download Report as PDF
+- Automatically displays User Display Name
+- Embed QR Code linking to the deployed application
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Database
+
+Firebase Realtime Database is used to store:
+
+- User Success Records
+- Achievement Details
+- User-specific Data
+
+---
+
+## Learning Objectives
+
+- Learn Firebase Authentication
+- Learn Firebase Realtime Database
+- Build Complete CRUD Applications
+- Generate Dynamic PDF Documents
+- Generate QR Codes
+- Implement Protected Routing
+- Practice Component-Based React Development
+- Build Industry-Standard Portfolio Projects
+
+---
+
+## Author
+
+**Akshat Pawar**  
+Computer Engineering Graduate  
+Mumbai, Maharashtra, India
+
+---
+
+## Status
+
+### Completed ✅
+
+- Firebase Authentication
+- Firebase Realtime Database Integration
+- Protected & Guest Routes
+- Success CRUD Operations
+- User Profile Module
+- Display Name Management
+- PDF Report Generation
+- QR Code Generation
+- Responsive UI
